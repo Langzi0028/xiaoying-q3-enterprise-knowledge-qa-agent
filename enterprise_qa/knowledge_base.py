@@ -1,74 +1,33 @@
-"""Safe synthetic enterprise documents and deterministic retrieval."""
+"""Embedding retrieval facade over locally generated policy chunks."""
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from .chunking import build_chunks
+from .corpus import DOCUMENTS
+from .embeddings import EmbeddingProvider
 from .models import KnowledgeChunk, SearchResult
+from .vector_index import VectorIndex, VectorSearch
 
 
-_CHUNKS = (
-    KnowledgeChunk(
-        document_id="D01",
-        title="Travel and Expense Policy",
-        version="2026.1",
-        date="2026-01-01",
-        chunk_id="D01-C1",
-        text="普通国内差旅报销凭证须在费用发生后 30 个自然日内提交。",
-    ),
-    KnowledgeChunk(
-        document_id="D02",
-        title="Urgent Project Expense Addendum",
-        version="2026.2",
-        date="2026-02-15",
-        chunk_id="D02-C1",
-        text="紧急项目报销凭证须在费用发生后 15 个自然日内提交。适用前须确认该费用属于紧急项目。",
-    ),
-    KnowledgeChunk(
-        document_id="P01",
-        title="Creator Hub Export Guide",
-        version="2026.1",
-        date="2026-01-10",
-        chunk_id="P01-C1",
-        text="导出的视频片段在 Creator Hub 中自生成起保留 30 天。",
-    ),
-)
+_CHUNKS = build_chunks(DOCUMENTS)
+_DEFAULT_INDEX_DATABASE = Path("data") / "embedding_index.db"
 
 
-def _matches_expense(query: str) -> bool:
-    return any(token in query for token in ("报销", "凭证", "发票", "费用"))
-
-
-def _matches_urgent(query: str) -> bool:
-    return "紧急项目" in query or ("紧急" in query and "项目" in query)
-
-
-def _matches_domestic_travel(query: str) -> bool:
-    return any(token in query for token in ("国内", "出差", "差旅", "普通"))
+def search_with_diagnostics(
+    question: str, *, database: str | Path | None = None
+) -> VectorSearch:
+    index = VectorIndex(
+        database or _DEFAULT_INDEX_DATABASE,
+        EmbeddingProvider.from_environment(),
+    )
+    return index.search(question.strip(), _CHUNKS, top_k=3)
 
 
 def search_documents(question: str) -> list[SearchResult]:
-    """Return only safe metadata for chunks relevant to the question."""
-    normalized = question.strip()
-    selected: list[KnowledgeChunk] = []
-    if _matches_expense(normalized):
-        if _matches_urgent(normalized):
-            selected = [_CHUNKS[1]]
-        elif _matches_domestic_travel(normalized):
-            selected = [_CHUNKS[0]]
-        else:
-            selected = [_CHUNKS[0], _CHUNKS[1]]
-    elif any(token in normalized.lower() for token in ("export", "导出", "剪辑")):
-        selected = [_CHUNKS[2]]
-    return [
-        SearchResult(
-            document_id=item.document_id,
-            title=item.title,
-            version=item.version,
-            date=item.date,
-            chunk_id=item.chunk_id,
-            excerpt=item.text[:96],
-        )
-        for item in selected
-    ]
+    """Return safe search results; diagnostics are available to the tool layer."""
+    return search_with_diagnostics(question).results
 
 
 def get_chunk(chunk_id: str) -> KnowledgeChunk | None:

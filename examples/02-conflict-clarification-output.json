@@ -4,18 +4,18 @@
     "clarifying_question":  "D01 规定普通国内差旅凭证须在 30 个自然日内提交，D02 规定紧急项目报销须在 15 个自然日内提交。这笔费用是否属于紧急项目？",
     "citations":  [
                       {
-                          "document_id":  "D01",
-                          "version":  "2026.1",
-                          "date":  "2026-01-01",
-                          "chunk_id":  "D01-C1",
-                          "title":  "Travel and Expense Policy"
-                      },
-                      {
                           "document_id":  "D02",
                           "version":  "2026.2",
                           "date":  "2026-02-15",
                           "chunk_id":  "D02-C1",
                           "title":  "Urgent Project Expense Addendum"
+                      },
+                      {
+                          "document_id":  "D01",
+                          "version":  "2026.1",
+                          "date":  "2026-01-01",
+                          "chunk_id":  "D01-C1",
+                          "title":  "Travel and Expense Policy"
                       }
                   ],
     "decision_source":  "fallback_missing_config",

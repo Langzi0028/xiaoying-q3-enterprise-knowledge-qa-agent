@@ -2,14 +2,30 @@
 
 from __future__ import annotations
 
-from .knowledge_base import get_chunk, search_documents as search
+from pathlib import Path
+
+from .knowledge_base import get_chunk, search_with_diagnostics
 from .models import KnowledgeChunk, SearchResult, ToolOutcome
 
 
-def search_documents(question: str, *, fail: bool = False) -> ToolOutcome[list[SearchResult]]:
+def search_documents(
+    question: str, *, fail: bool = False, database: str | Path | None = None
+) -> ToolOutcome[list[SearchResult]]:
     if fail:
         return ToolOutcome(ok=False, error_code="SEARCH_UNAVAILABLE")
-    return ToolOutcome(ok=True, value=search(question))
+    search = search_with_diagnostics(question, database=database)
+    return ToolOutcome(
+        ok=True,
+        value=search.results,
+        diagnostics={
+            "retrieval_mode": search.mode,
+            "cache_status": search.cache_status,
+            "candidate_count": search.candidate_count,
+            "selected_chunk_ids": [item.chunk_id for item in search.results],
+            "selected_scores": search.selected_scores,
+            "embedding_error_type": search.error_type,
+        },
+    )
 
 
 def read_chunk(chunk_id: str, *, fail: bool = False) -> ToolOutcome[KnowledgeChunk]:

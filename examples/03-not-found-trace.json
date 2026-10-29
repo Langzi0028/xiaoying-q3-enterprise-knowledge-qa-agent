@@ -4,7 +4,16 @@
         "node":  "execute_action",
         "action":  "search_documents",
         "parameters":  {
-                           "question_length":  11
+                           "question_length":  11,
+                           "retrieval_mode":  "hash_fallback",
+                           "cache_status":  "cache_hit",
+                           "candidate_count":  7,
+                           "selected_chunk_ids":  [
+
+                                                  ],
+                           "selected_scores":  {
+
+                                               }
                        },
         "result_summary":  "0 matching source chunks found.",
         "next_action":  "stop",

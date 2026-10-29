@@ -29,6 +29,7 @@ class AgentState(TypedDict, total=False):
     read_chunks: list[KnowledgeChunk]
     urgent_scope: bool
     tool_error: str | None
+    embedding_error_type: str | None
     decision: Decision
     trace: list[dict[str, object]]
     result: FinalResult | None
@@ -99,6 +100,7 @@ def _finalize_result(
         decision_source=source,
         trace=state.get("trace", []),
         error_code=error_code,
+        embedding_error_type=state.get("embedding_error_type"),
     )
 
 
@@ -137,18 +139,33 @@ def execute_action(state: AgentState) -> AgentState:
         state["fail_consumed"] = True
 
     if action == "search_documents":
-        outcome = search_documents(state["question"], fail=force_failure)
+        outcome = search_documents(
+            state["question"],
+            fail=force_failure,
+            database=state["storage"].database,
+        )
         state["search_completed"] = True
         if outcome.ok:
             state["search_results"] = outcome.value or []
             summary = f"{len(state['search_results'])} matching source chunks found."
+            diagnostics = outcome.diagnostics or {}
+            state["embedding_error_type"] = diagnostics.get("embedding_error_type")
+            parameters = {
+                "question_length": len(state["question"]),
+                "retrieval_mode": diagnostics.get("retrieval_mode"),
+                "cache_status": diagnostics.get("cache_status"),
+                "candidate_count": diagnostics.get("candidate_count"),
+                "selected_chunk_ids": diagnostics.get("selected_chunk_ids"),
+                "selected_scores": diagnostics.get("selected_scores"),
+            }
         else:
             state["tool_error"] = outcome.error_code
             summary = f"Search failed with {outcome.error_code}."
+            parameters = {"question_length": len(state["question"])}
         _append_trace(
             state,
             action=action,
-            parameters={"question_length": len(state["question"])},
+            parameters=parameters,
             result_summary=summary,
             rationale=decision.rationale,
             source=decision.source,
@@ -347,6 +364,7 @@ def run_question(
         "read_chunks": [],
         "urgent_scope": "紧急项目" in context_question,
         "tool_error": None,
+        "embedding_error_type": None,
         "trace": [],
         "result": None,
     }

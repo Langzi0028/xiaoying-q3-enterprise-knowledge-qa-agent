@@ -1,5 +1,7 @@
-﻿# Live LLM Evidence
+﻿# Live LLM And Embedding Evidence
 
 Status: not run.
 
-On 2026-10-29 the required three environment variables (OPENAI_API_KEY, OPENAI_BASE_URL, and OPENAI_MODEL) were not all available in the execution environment. No live-model proof is claimed. The deterministic fallback is covered by executable tests and the three evidence sets in this directory.
+On 2026-10-29 the environment did not expose all required `OPENAI_*` action-model variables or all required `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL`, and `EMBEDDING_MODEL` values. No live action-model or live embedding claim is made. The recorded examples use the tested local `fallback_missing_config` action planner and `hash_fallback` vector retrieval mode.
+
+No credential, gateway URL, prompt body, raw vector, request header, or raw provider response is recorded.

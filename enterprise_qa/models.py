@@ -17,6 +17,7 @@ class SearchResult:
     date: str
     chunk_id: str
     excerpt: str
+    retrieval_score: float | None = None
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ class ToolOutcome(Generic[T]):
     ok: bool
     value: T | None = None
     error_code: str | None = None
+    diagnostics: dict[str, object] | None = None
 
 
 @dataclass
@@ -45,6 +47,7 @@ class FinalResult:
     decision_source: str
     trace: list[dict[str, object]]
     error_code: str | None = None
+    embedding_error_type: str | None = None
 
     def to_dict(self) -> dict[str, object]:
         return {

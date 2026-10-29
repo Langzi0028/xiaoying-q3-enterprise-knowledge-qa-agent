@@ -52,4 +52,10 @@ def main() -> None:
             f"LLM request failed: {planner.last_error_type}; using deterministic fallback.",
             file=sys.stderr,
         )
+    if result.embedding_error_type:
+        print(
+            "Embedding request failed: "
+            f"{result.embedding_error_type}; using local vector fallback.",
+            file=sys.stderr,
+        )
     print(json.dumps(result.to_dict(), ensure_ascii=False))

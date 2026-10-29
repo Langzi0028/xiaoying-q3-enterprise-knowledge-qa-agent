@@ -4,7 +4,18 @@
         "node":  "execute_action",
         "action":  "search_documents",
         "parameters":  {
-                           "question_length":  9
+                           "question_length":  9,
+                           "retrieval_mode":  "hash_fallback",
+                           "cache_status":  "cache_hit",
+                           "candidate_count":  7,
+                           "selected_chunk_ids":  [
+                                                      "D02-C1",
+                                                      "D01-C1"
+                                                  ],
+                           "selected_scores":  {
+                                                   "D02-C1":  0.2261,
+                                                   "D01-C1":  0.1649
+                                               }
                        },
         "result_summary":  "2 matching source chunks found.",
         "next_action":  "read_chunk",
@@ -16,9 +27,9 @@
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D01-C1"
+                           "chunk_id":  "D02-C1"
                        },
-        "result_summary":  "Read verified chunk D01-C1.",
+        "result_summary":  "Read verified chunk D02-C1.",
         "next_action":  "read_chunk",
         "decision_source":  "fallback_missing_config",
         "rationale":  "Read the next retrieved source chunk."
@@ -28,9 +39,9 @@
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D02-C1"
+                           "chunk_id":  "D01-C1"
                        },
-        "result_summary":  "Read verified chunk D02-C1.",
+        "result_summary":  "Read verified chunk D01-C1.",
         "next_action":  "ask_clarifying_question",
         "decision_source":  "fallback_missing_config",
         "rationale":  "Read the next retrieved source chunk."

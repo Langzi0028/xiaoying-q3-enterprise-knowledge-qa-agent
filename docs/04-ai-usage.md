@@ -1,5 +1,5 @@
 ﻿# 04 AI Usage
 
-AI assistance was used to draft the project design, implementation plan, Python code, tests, safe synthetic examples, and documentation. The implementation was manually reviewed through source inspection and executed commands.
+AI assistance helped draft the embedding-retrieval design, Clause-Bridge algorithm, Python implementation, tests, safe synthetic evidence, and documentation. The implementation was manually checked by running the complete test suite and representative CLI paths.
 
-Claims supported by executable evidence are limited to the test suite and the recorded commands in `examples/`. The source citations, tool-error paths, conflict behavior, execution cap, and stdout/stderr contract are covered by pytest. The project does not claim that fallback behavior proves live-model decision quality. No API key, token, password, private URL, prompt payload, or raw model response was added to the repository.
+Claims supported by executable evidence are limited to local Clause-Bridge chunking, vector cache invalidation, deterministic hash-vector retrieval, source-read citation enforcement, conflict clarification, tool-error handling, and the recorded examples. The project does not claim live action-model or live embedding quality without a real configured request. No API key, token, password, private URL, raw vector, prompt payload, or raw provider response was included in source, documentation, tests, or examples.
