@@ -67,3 +67,33 @@ def test_conflict_is_not_hidden_by_an_extra_retrieval_candidate(tmp_path: Path) 
         "D01",
         "D02",
     }
+
+
+def test_model_selected_chunk_id_controls_the_first_read(tmp_path: Path) -> None:
+    from enterprise_qa.planner import Planner
+
+    result = run_question(
+        "报销凭证多久提交？",
+        database=tmp_path / "q3.db",
+        planner=Planner.with_test_response({"action": "read_chunk", "chunk_id": "D02-C1"}),
+    )
+
+    reads = [item for item in result.trace if item["action"] == "read_chunk"]
+
+    assert reads[0]["parameters"]["chunk_id"] == "D02-C1"
+    assert reads[0]["decision_source"] == "live_llm"
+    assert reads[0]["parameters"]["model_selected_chunk"] is True
+    assert "D02-C1" in reads[0]["parameters"]["candidate_chunk_ids"]
+
+
+def test_model_stop_before_evidence_returns_explicitly_incomplete(tmp_path: Path) -> None:
+    from enterprise_qa.planner import Planner
+
+    result = run_question(
+        "普通国内差旅报销凭证多久提交？",
+        database=tmp_path / "q3.db",
+        planner=Planner.with_test_response({"action": "stop"}),
+    )
+
+    assert result.status == "incomplete"
+    assert result.error_code == "MODEL_STOPPED_BEFORE_EVIDENCE"

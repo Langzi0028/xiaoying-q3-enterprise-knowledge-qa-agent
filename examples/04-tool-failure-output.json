@@ -1,0 +1,10 @@
+﻿{
+    "status":  "tool_failed",
+    "answer":  null,
+    "clarifying_question":  null,
+    "citations":  [
+
+                  ],
+    "decision_source":  "live_llm",
+    "error_code":  "READ_UNAVAILABLE"
+}

@@ -13,8 +13,8 @@
                                                       "D02-C3"
                                                   ],
                            "selected_scores":  {
-                                                   "D01-C3":  0.7172,
-                                                   "D02-C3":  0.6413
+                                                   "D01-C3":  0.7118,
+                                                   "D02-C3":  0.6369
                                                }
                        },
         "result_summary":  "2 matching source chunks found.",
@@ -27,7 +27,12 @@
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D01-C3"
+                           "chunk_id":  "D01-C3",
+                           "candidate_chunk_ids":  [
+                                                       "D01-C3",
+                                                       "D02-C3"
+                                                   ],
+                           "model_selected_chunk":  true
                        },
         "result_summary":  "Read verified chunk D01-C3.",
         "next_action":  "read_chunk",
@@ -39,7 +44,11 @@
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D02-C3"
+                           "chunk_id":  "D02-C3",
+                           "candidate_chunk_ids":  [
+                                                       "D02-C3"
+                                                   ],
+                           "model_selected_chunk":  true
                        },
         "result_summary":  "Read verified chunk D02-C3.",
         "next_action":  "ask_clarifying_question",

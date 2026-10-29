@@ -1,0 +1,51 @@
+﻿[
+    {
+        "step":  1,
+        "node":  "execute_action",
+        "action":  "search_documents",
+        "parameters":  {
+                           "question_length":  15,
+                           "retrieval_mode":  "live_embedding",
+                           "cache_status":  "cache_rebuilt",
+                           "candidate_count":  7,
+                           "selected_chunk_ids":  [
+                                                      "D01-C1"
+                                                  ],
+                           "selected_scores":  {
+                                                   "D01-C1":  0.8136
+                                               }
+                       },
+        "result_summary":  "1 matching source chunks found.",
+        "next_action":  "read_chunk",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    },
+    {
+        "step":  2,
+        "node":  "execute_action",
+        "action":  "read_chunk",
+        "parameters":  {
+                           "chunk_id":  "D01-C1",
+                           "candidate_chunk_ids":  [
+                                                       "D01-C1"
+                                                   ],
+                           "model_selected_chunk":  true
+                       },
+        "result_summary":  "Chunk read failed with READ_UNAVAILABLE.",
+        "next_action":  "stop",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    },
+    {
+        "step":  3,
+        "node":  "execute_action",
+        "action":  "stop",
+        "parameters":  {
+
+                       },
+        "result_summary":  "Stopped after tool error READ_UNAVAILABLE.",
+        "next_action":  "finalize",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    }
+]

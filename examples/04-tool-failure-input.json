@@ -1,0 +1,7 @@
+﻿{
+    "command":  "python main.py ask --question \u003cquestion\u003e --fail-tool read_chunk --database data/tool-failure-evidence.db",
+    "question":  "普通国内差旅报销凭证多久提交？",
+    "forced_failure":  "read_chunk",
+    "database":  "data/tool-failure-evidence.db",
+    "verification":  "Actual controlled tool failure; not a simulated output file."
+}

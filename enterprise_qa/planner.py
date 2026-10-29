@@ -22,6 +22,7 @@ class Decision:
     action: str
     source: str
     rationale: str
+    parameters: dict[str, str] | None = None
 
 
 class Planner:
@@ -48,10 +49,15 @@ class Planner:
 
     def choose(self, state: dict[str, Any]) -> Decision:
         if self.test_response is not None:
-            action = self._validate_live_action(self.test_response, state)
-            if action is None:
+            decision = self._validate_live_action(self.test_response, state)
+            if decision is None:
                 return self._rule_decision(state, "fallback_invalid_output")
-            return Decision(action=action, source="live_llm", rationale="Validated test decision.")
+            return Decision(
+                action=decision.action,
+                source="live_llm",
+                rationale="Validated test decision.",
+                parameters=decision.parameters,
+            )
         if not self.has_live_config:
             return self._rule_decision(state, "fallback_missing_config")
         if self._live_disabled:
@@ -62,17 +68,23 @@ class Planner:
             self.last_error_type = type(error).__name__
             self._live_disabled = True
             return self._rule_decision(state, "fallback_live_error")
-        action = self._validate_live_action(live_response, state)
-        if action is None:
+        decision = self._validate_live_action(live_response, state)
+        if decision is None:
             self._live_disabled = True
             return self._rule_decision(state, "fallback_invalid_output")
-        return Decision(action=action, source="live_llm", rationale="Validated constrained live-model action.")
+        return Decision(
+            action=decision.action,
+            source="live_llm",
+            rationale="Validated constrained live-model action.",
+            parameters=decision.parameters,
+        )
 
     def _request_live_action(self, state: dict[str, Any]) -> dict[str, Any]:
         """Request one small, non-sensitive action object from the configured model."""
         from langchain_openai import ChatOpenAI
 
-        expected = self._rule_decision(state, "fallback_missing_config").action
+        rule_decision = self._rule_decision(state, "fallback_missing_config")
+        allowed_actions = self._allowed_live_actions(state, rule_decision)
         client = ChatOpenAI(
             model=os.environ["LLM_MODEL"],
             api_key=os.environ["LLM_API_KEY"],
@@ -85,13 +97,14 @@ class Planner:
             [
                 (
                     "system",
-                    "Return only JSON with one key, action. Select exactly one action from the supplied allowed list. Do not include reasoning.",
+                    "Return only JSON with action. For read_chunk, also return chunk_id selected from the supplied unread_chunk_ids. Do not include reasoning.",
                 ),
                 (
                     "user",
                     json.dumps(
                         {
-                            "allowed_actions": [expected],
+                            "allowed_actions": allowed_actions,
+                            "unread_chunk_ids": self._unread_chunk_ids(state),
                             "question_length": len(str(state.get("question", ""))),
                             "search_result_count": len(state.get("search_results", [])),
                             "read_chunk_count": len(state.get("read_chunks", [])),
@@ -111,12 +124,36 @@ class Planner:
 
     def _validate_live_action(
         self, response: dict[str, Any], state: dict[str, Any]
-    ) -> str | None:
+    ) -> Decision | None:
         action = response.get("action")
-        expected = self._rule_decision(state, "fallback_missing_config").action
-        if action not in ALLOWED_ACTIONS or action != expected:
+        rule_decision = self._rule_decision(state, "fallback_missing_config")
+        if action not in self._allowed_live_actions(state, rule_decision):
             return None
-        return action
+        if action == "read_chunk":
+            chunk_id = response.get("chunk_id")
+            if chunk_id not in self._unread_chunk_ids(state):
+                return None
+            return Decision(action, "live_llm", "", {"chunk_id": chunk_id})
+        return Decision(action, "live_llm", "")
+
+    @staticmethod
+    def _unread_chunk_ids(state: dict[str, Any]) -> list[str]:
+        read_ids = {
+            chunk.chunk_id for chunk in state.get("read_chunks", [])
+        }
+        return [
+            result.chunk_id
+            for result in state.get("search_results", [])
+            if result.chunk_id not in read_ids
+        ]
+
+    @staticmethod
+    def _allowed_live_actions(
+        state: dict[str, Any], rule_decision: Decision
+    ) -> list[str]:
+        if rule_decision.action == "read_chunk":
+            return ["read_chunk", "stop"]
+        return [rule_decision.action]
 
     def _rule_decision(self, state: dict[str, Any], source: str) -> Decision:
         if state.get("tool_error"):
@@ -129,7 +166,12 @@ class Planner:
         read_chunks = state.get("read_chunks", [])
         unread = [item for item in search_results if item.chunk_id not in {chunk.chunk_id for chunk in read_chunks}]
         if unread:
-            return Decision("read_chunk", source, "Read the next retrieved source chunk.")
+            return Decision(
+                "read_chunk",
+                source,
+                "Read the next retrieved source chunk.",
+                {"chunk_id": unread[0].chunk_id},
+            )
         document_ids = {chunk.document_id for chunk in read_chunks}
         if {"D01", "D02"}.issubset(document_ids) and not state.get("urgent_scope"):
             return Decision(

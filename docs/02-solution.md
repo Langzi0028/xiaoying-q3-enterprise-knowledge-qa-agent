@@ -28,7 +28,7 @@ The application builds this loop with LangGraph `StateGraph`. `choose_action` se
 - `storage.py`: safe run records/checkpoints; the same question-local database also contains generated vector cache tables.
 - `planner.py`: separate optional action-selection model boundary using `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, and `LLM_API_MODE`.
 
-The only valid Agent actions are `search_documents`, `read_chunk`, `ask_clarifying_question`, `answer_with_citations`, and `stop`. A normal answer requires chunks read during the current run. The D01/D02 conflict must cite both chunks and request scope. The default action limit is eight; exhaustion returns `incomplete` with `EXECUTION_LIMIT_REACHED`.
+The only valid Agent actions are `search_documents`, `read_chunk`, `ask_clarifying_question`, `answer_with_citations`, and `stop`. When sources remain unread, the live model receives safe candidate chunk IDs and selects which one to read; an invalid ID is rejected and uses the deterministic safe fallback. It may also select `stop`, which becomes explicit `incomplete` rather than a fabricated answer. A normal answer requires chunks read during the current run. The D01/D02 conflict must cite both chunks and request scope. The default action limit is eight; exhaustion returns `incomplete` with `EXECUTION_LIMIT_REACHED`.
 
 ## Safe fallback and output boundary
 

@@ -15,6 +15,8 @@ python main.py ask --question "报销凭证多久提交？" --database data/revi
 
 It returns `clarification_required` with the 30-day D01 and 15-day D02 citations because the request does not state whether the expense belongs to an urgent project.
 
+The review evidence includes normal answering, information-insufficient conflict clarification, controlled tool failure, and a real compatible-gateway action/embedding run.
+
 ## Installation and Run
 
 Run commands from `xiaoying-q3-enterprise-knowledge-qa-agent/` using the selected Conda/PyCharm interpreter:
@@ -58,6 +60,6 @@ EMBEDDING_MODEL=
 ## Known Limitations and No-Secret Policy
 
 - The corpus is synthetic; it is not a production enterprise document system.
-- No full embedding configuration was available during the recorded verification, so no live-embedding quality claim is made.
-- The offline hash-vector path validates chunking, vector indexing, and conflict behavior but does not prove production semantic-retrieval quality.
+- The compatible gateway was verified with real action-selection and embedding requests against this synthetic corpus; a larger approved corpus is still needed to calibrate production relevance thresholds.
+- The offline hash-vector path remains a fallback for missing or failed embedding configuration.
 - Never commit `.env`, API keys, tokens, passwords, private URLs, generated SQLite databases, virtual environments, caches, or IDE metadata.

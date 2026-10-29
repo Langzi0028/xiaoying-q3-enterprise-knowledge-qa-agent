@@ -172,17 +172,38 @@ def execute_action(state: AgentState) -> AgentState:
         )
     elif action == "read_chunk":
         already_read = {chunk.chunk_id for chunk in state.get("read_chunks", [])}
+        unread_chunk_ids = [
+            item.chunk_id
+            for item in state.get("search_results", [])
+            if item.chunk_id not in already_read
+        ]
+        selected_chunk_id = (decision.parameters or {}).get("chunk_id")
         target = next(
-            (item for item in state.get("search_results", []) if item.chunk_id not in already_read),
+            (
+                item
+                for item in state.get("search_results", [])
+                if item.chunk_id == selected_chunk_id and item.chunk_id not in already_read
+            ),
             None,
         )
+        if target is None:
+            target = next(
+                (item for item in state.get("search_results", []) if item.chunk_id not in already_read),
+                None,
+            )
         if target is None:
             state["tool_error"] = "NO_UNREAD_CHUNK"
             summary = "No unread source chunk remained."
             parameters = {"chunk_id": None}
         else:
             outcome = read_chunk(target.chunk_id, fail=force_failure)
-            parameters = {"chunk_id": target.chunk_id}
+            parameters = {
+                "chunk_id": target.chunk_id,
+                "candidate_chunk_ids": unread_chunk_ids,
+                "model_selected_chunk": (
+                    decision.source == "live_llm" and selected_chunk_id == target.chunk_id
+                ),
+            }
             if outcome.ok:
                 state.setdefault("read_chunks", []).append(outcome.value)
                 summary = f"Read verified chunk {target.chunk_id}."
@@ -279,6 +300,13 @@ def execute_action(state: AgentState) -> AgentState:
         if state.get("tool_error"):
             _finalize_result(state, status="tool_failed", error_code=state["tool_error"])
             summary = f"Stopped after tool error {state['tool_error']}."
+        elif state.get("search_results") and not state.get("read_chunks"):
+            _finalize_result(
+                state,
+                status="incomplete",
+                error_code="MODEL_STOPPED_BEFORE_EVIDENCE",
+            )
+            summary = "Model stopped before any retrieved source was read."
         else:
             _finalize_result(
                 state,

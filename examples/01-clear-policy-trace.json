@@ -12,7 +12,7 @@
                                                       "D01-C1"
                                                   ],
                            "selected_scores":  {
-                                                   "D01-C1":  0.8151
+                                                   "D01-C1":  0.8115
                                                }
                        },
         "result_summary":  "1 matching source chunks found.",
@@ -25,7 +25,11 @@
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D01-C1"
+                           "chunk_id":  "D01-C1",
+                           "candidate_chunk_ids":  [
+                                                       "D01-C1"
+                                                   ],
+                           "model_selected_chunk":  true
                        },
         "result_summary":  "Read verified chunk D01-C1.",
         "next_action":  "answer_with_citations",
