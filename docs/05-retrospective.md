@@ -16,4 +16,4 @@ The embedding upgrade includes a raw local corpus, generated chunks, configurabl
 
 ## Risks and next steps
 
-Live embedding evidence remains unavailable until a compatible `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL`, and `EMBEDDING_MODEL` are supplied. The next step is a sanctioned online run to verify a real `live_embedding` trace and inspect ranking quality against a larger approved document corpus. Production deployment would additionally need document access control, ingestion validation, and evaluation data.
+The constrained live action-selection request is verified, but live embedding evidence remains unavailable until a compatible `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL`, and `EMBEDDING_MODEL` are supplied. The next step is a sanctioned online embedding run to inspect a real `live_embedding` retrieval trace against a larger approved document corpus. Production deployment would additionally need document access control, ingestion validation, and evaluation data.

@@ -10,8 +10,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 def run_cli(*arguments: str) -> subprocess.CompletedProcess[str]:
     environment = os.environ.copy()
-    for key in ("OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL"):
-        environment.pop(key, None)
+    # Empty process variables take precedence over a developer's local .env.
+    for key in ("LLM_API_KEY", "LLM_BASE_URL", "LLM_MODEL"):
+        environment[key] = ""
     return subprocess.run(
         [sys.executable, "main.py", *arguments],
         cwd=PROJECT_ROOT,

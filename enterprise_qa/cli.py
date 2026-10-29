@@ -15,7 +15,7 @@ from .workflow import run_question
 def _has_live_llm_config() -> bool:
     return all(
         os.getenv(name)
-        for name in ("OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL")
+        for name in ("LLM_API_KEY", "LLM_BASE_URL", "LLM_MODEL")
     )
 
 

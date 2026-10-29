@@ -40,18 +40,20 @@ The ignored SQLite runtime database caches vectors using the chunk corpus finger
 Copy `.env.example` to `.env` only for local configuration. Shell/PyCharm variables take precedence.
 
 ```dotenv
-# Optional constrained action-selection model
-OPENAI_API_KEY=
-OPENAI_BASE_URL=
-OPENAI_MODEL=
+# Do not commit real credentials. These values configure an OpenAI-compatible gateway.
+LLM_BASE_URL=
+LLM_API_KEY=
+LLM_MODEL=
+# responses is preferred; use chat_completions if the gateway lacks /v1/responses.
+LLM_API_MODE=chat_completions
 
-# Optional embedding model; separate from OPENAI_* above
+# Optional embedding model; separate from LLM_* above
 EMBEDDING_API_KEY=
 EMBEDDING_BASE_URL=
 EMBEDDING_MODEL=
 ```
 
-The final JSON is written to stdout. stderr carries only concise missing-action-model or embedding/action exception-type fallback notices. Traces carry safe retrieval mode, cache status, candidate count, selected IDs, and rounded scores; they never contain vectors, credentials, prompts, raw responses, or private URLs.
+`LLM_API_MODE=responses` uses the Responses API. Set it to `chat_completions` for a compatible gateway that lacks `/v1/responses`. The final JSON is written to stdout. stderr carries only concise missing-action-model or embedding/action exception-type fallback notices. Traces carry safe retrieval mode, cache status, candidate count, selected IDs, and rounded scores; they never contain vectors, credentials, prompts, raw responses, or private URLs.
 
 ## Known Limitations and No-Secret Policy
 

@@ -1,0 +1,61 @@
+﻿[
+    {
+        "step":  1,
+        "node":  "execute_action",
+        "action":  "search_documents",
+        "parameters":  {
+                           "question_length":  9,
+                           "retrieval_mode":  "hash_fallback",
+                           "cache_status":  "cache_rebuilt",
+                           "candidate_count":  7,
+                           "selected_chunk_ids":  [
+                                                      "D02-C1",
+                                                      "D01-C1"
+                                                  ],
+                           "selected_scores":  {
+                                                   "D02-C1":  0.2261,
+                                                   "D01-C1":  0.1649
+                                               }
+                       },
+        "result_summary":  "2 matching source chunks found.",
+        "next_action":  "read_chunk",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    },
+    {
+        "step":  2,
+        "node":  "execute_action",
+        "action":  "read_chunk",
+        "parameters":  {
+                           "chunk_id":  "D02-C1"
+                       },
+        "result_summary":  "Read verified chunk D02-C1.",
+        "next_action":  "read_chunk",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    },
+    {
+        "step":  3,
+        "node":  "execute_action",
+        "action":  "read_chunk",
+        "parameters":  {
+                           "chunk_id":  "D01-C1"
+                       },
+        "result_summary":  "Read verified chunk D01-C1.",
+        "next_action":  "ask_clarifying_question",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    },
+    {
+        "step":  4,
+        "node":  "execute_action",
+        "action":  "ask_clarifying_question",
+        "parameters":  {
+                           "citation_count":  2
+                       },
+        "result_summary":  "Requested urgent-project scope to resolve conflicting deadlines.",
+        "next_action":  "finalize",
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
+    }
+]

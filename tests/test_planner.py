@@ -2,7 +2,7 @@
 
 
 def test_missing_config_uses_explicit_rule_fallback(monkeypatch) -> None:
-    for name in ("OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL"):
+    for name in ("LLM_API_KEY", "LLM_BASE_URL", "LLM_MODEL"):
         monkeypatch.delenv(name, raising=False)
 
     decision = Planner.from_environment().choose({"search_results": [], "read_chunks": []})

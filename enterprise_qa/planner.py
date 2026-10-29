@@ -38,7 +38,7 @@ class Planner:
         return cls(
             has_live_config=all(
                 os.getenv(name)
-                for name in ("OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL")
+                for name in ("LLM_API_KEY", "LLM_BASE_URL", "LLM_MODEL")
             )
         )
 
@@ -74,11 +74,12 @@ class Planner:
 
         expected = self._rule_decision(state, "fallback_missing_config").action
         client = ChatOpenAI(
-            model=os.environ["OPENAI_MODEL"],
-            api_key=os.environ["OPENAI_API_KEY"],
-            base_url=os.environ["OPENAI_BASE_URL"],
+            model=os.environ["LLM_MODEL"],
+            api_key=os.environ["LLM_API_KEY"],
+            base_url=os.environ["LLM_BASE_URL"],
             temperature=0,
             timeout=15,
+            use_responses_api=os.getenv("LLM_API_MODE", "responses") != "chat_completions",
         )
         response = client.invoke(
             [

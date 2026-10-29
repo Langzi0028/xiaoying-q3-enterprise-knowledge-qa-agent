@@ -1,0 +1,5 @@
+﻿{
+    "command":  "python main.py ask --question \u003cquestion\u003e --database data/config-style-check.db",
+    "question":  "报销凭证多久提交？",
+    "purpose":  "Safe proof of a constrained online action-selection decision."
+}

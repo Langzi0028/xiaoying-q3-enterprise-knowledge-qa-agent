@@ -26,10 +26,10 @@ The application builds this loop with LangGraph `StateGraph`. `choose_action` se
 - `tools.py`: safe search/read tool outcomes and non-sensitive retrieval diagnostics.
 - `workflow.py`: execution cap, source-read gate, citation guard, conflict clarification, and trace creation.
 - `storage.py`: safe run records/checkpoints; the same question-local database also contains generated vector cache tables.
-- `planner.py`: separate optional action-selection model boundary using `OPENAI_*` variables.
+- `planner.py`: separate optional action-selection model boundary using `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, and `LLM_API_MODE`.
 
 The only valid Agent actions are `search_documents`, `read_chunk`, `ask_clarifying_question`, `answer_with_citations`, and `stop`. A normal answer requires chunks read during the current run. The D01/D02 conflict must cite both chunks and request scope. The default action limit is eight; exhaustion returns `incomplete` with `EXECUTION_LIMIT_REACHED`.
 
 ## Safe fallback and output boundary
 
-The embedding provider and the action-selection model are independently configured. A missing embedding configuration silently selects `hash_fallback` and records that safe mode in trace data. A live embedding request failure prints only `Embedding request failed: <ExceptionType>; using local vector fallback.` to stderr. Trace data includes retrieval mode, cache status, candidate count, selected chunk IDs, and rounded scores; no raw vector, secret, gateway URL, prompt, request, raw response, or chain-of-thought is recorded. The final machine-readable JSON remains stdout-only.
+The embedding provider and action-selection model are independently configured. `LLM_API_MODE=responses` uses the Responses API; set it to `chat_completions` for a compatible gateway without `/v1/responses`. A missing embedding configuration silently selects `hash_fallback` and records that safe mode in trace data. A live embedding request failure prints only `Embedding request failed: <ExceptionType>; using local vector fallback.` to stderr. Trace data includes retrieval mode, cache status, candidate count, selected chunk IDs, and rounded scores; no raw vector, secret, gateway URL, prompt, request, raw response, or chain-of-thought is recorded. The final machine-readable JSON remains stdout-only.
