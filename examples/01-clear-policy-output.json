@@ -11,6 +11,6 @@
                           "title":  "Travel and Expense Policy"
                       }
                   ],
-    "decision_source":  "fallback_missing_config",
+    "decision_source":  "live_llm",
     "error_code":  null
 }

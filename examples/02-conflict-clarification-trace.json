@@ -5,46 +5,46 @@
         "action":  "search_documents",
         "parameters":  {
                            "question_length":  9,
-                           "retrieval_mode":  "hash_fallback",
+                           "retrieval_mode":  "live_embedding",
                            "cache_status":  "cache_hit",
                            "candidate_count":  7,
                            "selected_chunk_ids":  [
-                                                      "D02-C1",
-                                                      "D01-C1"
+                                                      "D01-C3",
+                                                      "D02-C3"
                                                   ],
                            "selected_scores":  {
-                                                   "D02-C1":  0.2261,
-                                                   "D01-C1":  0.1649
+                                                   "D01-C3":  0.7172,
+                                                   "D02-C3":  0.6413
                                                }
                        },
         "result_summary":  "2 matching source chunks found.",
         "next_action":  "read_chunk",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "Search must run before evidence can be read."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     },
     {
         "step":  2,
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D02-C1"
+                           "chunk_id":  "D01-C3"
                        },
-        "result_summary":  "Read verified chunk D02-C1.",
+        "result_summary":  "Read verified chunk D01-C3.",
         "next_action":  "read_chunk",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "Read the next retrieved source chunk."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     },
     {
         "step":  3,
         "node":  "execute_action",
         "action":  "read_chunk",
         "parameters":  {
-                           "chunk_id":  "D01-C1"
+                           "chunk_id":  "D02-C3"
                        },
-        "result_summary":  "Read verified chunk D01-C1.",
+        "result_summary":  "Read verified chunk D02-C3.",
         "next_action":  "ask_clarifying_question",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "Read the next retrieved source chunk."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     },
     {
         "step":  4,
@@ -55,7 +55,7 @@
                        },
         "result_summary":  "Requested urgent-project scope to resolve conflicting deadlines.",
         "next_action":  "finalize",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "The retrieved deadlines conflict until urgent-project scope is known."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     }
 ]

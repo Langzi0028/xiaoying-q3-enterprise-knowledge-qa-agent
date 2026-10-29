@@ -5,20 +5,20 @@
         "action":  "search_documents",
         "parameters":  {
                            "question_length":  15,
-                           "retrieval_mode":  "hash_fallback",
+                           "retrieval_mode":  "live_embedding",
                            "cache_status":  "cache_rebuilt",
                            "candidate_count":  7,
                            "selected_chunk_ids":  [
                                                       "D01-C1"
                                                   ],
                            "selected_scores":  {
-                                                   "D01-C1":  0.9802
+                                                   "D01-C1":  0.8151
                                                }
                        },
         "result_summary":  "1 matching source chunks found.",
         "next_action":  "read_chunk",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "Search must run before evidence can be read."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     },
     {
         "step":  2,
@@ -29,8 +29,8 @@
                        },
         "result_summary":  "Read verified chunk D01-C1.",
         "next_action":  "answer_with_citations",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "Read the next retrieved source chunk."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     },
     {
         "step":  3,
@@ -41,7 +41,7 @@
                        },
         "result_summary":  "Answered from the verified travel policy chunk.",
         "next_action":  "finalize",
-        "decision_source":  "fallback_missing_config",
-        "rationale":  "Verified source chunks support the result."
+        "decision_source":  "live_llm",
+        "rationale":  "Validated constrained live-model action."
     }
 ]

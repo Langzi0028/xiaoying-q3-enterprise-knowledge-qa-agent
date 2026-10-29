@@ -207,7 +207,11 @@ def execute_action(state: AgentState) -> AgentState:
                 "D02 规定紧急项目报销须在 15 个自然日内提交。"
                 "这笔费用是否属于紧急项目？"
             ),
-            citations=[_citation(chunk) for chunk in chunks],
+            citations=[
+                _citation(chunk)
+                for chunk in chunks
+                if chunk.document_id in {"D01", "D02"}
+            ],
         )
         _append_trace(
             state,
@@ -223,6 +227,22 @@ def execute_action(state: AgentState) -> AgentState:
         if not chunks:
             _finalize_result(state, status="tool_failed", error_code="UNVERIFIED_CITATION")
             summary = "Answer blocked because no chunk was verified."
+        elif {"D01", "D02"}.issubset(ids) and not state.get("urgent_scope"):
+            _finalize_result(
+                state,
+                status="clarification_required",
+                clarifying_question=(
+                    "D01 规定普通国内差旅凭证须在 30 个自然日内提交，"
+                    "D02 规定紧急项目报销须在 15 个自然日内提交。"
+                    "这笔费用是否属于紧急项目？"
+                ),
+                citations=[
+                    _citation(chunk)
+                    for chunk in chunks
+                    if chunk.document_id in {"D01", "D02"}
+                ],
+            )
+            summary = "Answer blocked because policy deadlines conflict without scope."
         elif ids == {"D02"}:
             _finalize_result(
                 state,

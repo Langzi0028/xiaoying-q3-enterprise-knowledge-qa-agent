@@ -1,4 +1,6 @@
-﻿from enterprise_qa.embeddings import EmbeddingProvider
+﻿from types import SimpleNamespace
+
+from enterprise_qa.embeddings import EmbeddingProvider
 
 
 def remove_embedding_environment(monkeypatch) -> None:
@@ -35,3 +37,36 @@ def test_invalid_live_embedding_response_falls_back_without_payload_leak() -> No
     assert batch.mode == "hash_fallback"
     assert batch.error_type == "ValueError"
     assert "safe text" not in str(batch.diagnostics)
+
+
+def test_live_embedding_sends_text_array_directly_to_compatible_gateway(
+    monkeypatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    class FakeOpenAI:
+        def __init__(self, **kwargs) -> None:
+            captured["client_kwargs"] = kwargs
+            self.embeddings = self
+
+        def create(self, **kwargs):
+            captured["request_kwargs"] = kwargs
+            return SimpleNamespace(
+                data=[
+                    SimpleNamespace(embedding=[1.0, 0.0]),
+                    SimpleNamespace(embedding=[0.0, 1.0]),
+                ]
+            )
+
+    monkeypatch.setenv("EMBEDDING_API_KEY", "test-key")
+    monkeypatch.setenv("EMBEDDING_BASE_URL", "https://gateway.example/v1")
+    monkeypatch.setenv("EMBEDDING_MODEL", "test-embedding")
+    monkeypatch.setattr("openai.OpenAI", FakeOpenAI)
+
+    batch = EmbeddingProvider.from_environment().embed(["first source", "second source"])
+
+    assert batch.mode == "live_embedding"
+    assert captured["request_kwargs"] == {
+        "model": "test-embedding",
+        "input": ["first source", "second source"],
+    }

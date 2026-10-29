@@ -131,7 +131,7 @@ class Planner:
         if unread:
             return Decision("read_chunk", source, "Read the next retrieved source chunk.")
         document_ids = {chunk.document_id for chunk in read_chunks}
-        if document_ids == {"D01", "D02"} and not state.get("urgent_scope"):
+        if {"D01", "D02"}.issubset(document_ids) and not state.get("urgent_scope"):
             return Decision(
                 "ask_clarifying_question",
                 source,

@@ -1,5 +1,6 @@
 ﻿{
-    "command":  "python main.py ask --question \u003cquestion\u003e --database data/evidence.db",
+    "command":  "python main.py ask --question \u003cquestion\u003e --database data/live-evidence.db",
     "question":  "普通国内差旅报销凭证多久提交？",
-    "database":  "data/evidence.db"
+    "database":  "data/live-evidence.db",
+    "verification":  "Real OpenAI-compatible LLM and embedding gateway run."
 }

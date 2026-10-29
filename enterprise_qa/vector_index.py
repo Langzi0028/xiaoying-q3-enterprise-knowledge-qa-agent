@@ -23,6 +23,14 @@ class VectorSearch:
     error_type: str | None = None
 
 
+# A lower-scoring document must remain close to the leading document before
+# diversity can add it. This avoids turning an explicit policy scope into a
+# false conflict while still preserving genuinely close competing policies.
+_DIVERSITY_SCORE_RATIO = 0.8
+_LIVE_MIN_RELEVANCE_SCORE = 0.5
+_HASH_MIN_RELEVANCE_SCORE = 0.1
+
+
 def _cosine(left: list[float], right: list[float]) -> float:
     if len(left) != len(right) or not left or not right:
         return -1.0
@@ -105,8 +113,21 @@ class VectorIndex:
             key=lambda item: item[1],
             reverse=True,
         )
-        diversity_floor = 0.0
+        scope_is_explicit = any(
+            token in question for token in ("普通", "国内", "出差", "差旅", "紧急项目")
+        )
+        leading_score = ranked[0][1] if ranked else 0.0
+        diversity_floor = (
+            max(0.0, leading_score * _DIVERSITY_SCORE_RATIO)
+            if scope_is_explicit
+            else 0.0
+        )
         selected = self._diverse_selection(ranked, top_k, diversity_floor=diversity_floor)
+        relevance_floor = (
+            _LIVE_MIN_RELEVANCE_SCORE
+            if query_batch.mode == "live_embedding" and not error_type
+            else _HASH_MIN_RELEVANCE_SCORE
+        )
         result_items = [
             SearchResult(
                 document_id=chunk.document_id,
@@ -118,7 +139,7 @@ class VectorIndex:
                 retrieval_score=round(score, 4),
             )
             for chunk, score in selected
-            if score > 0.1
+            if score >= relevance_floor
         ]
         return VectorSearch(
             results=result_items,

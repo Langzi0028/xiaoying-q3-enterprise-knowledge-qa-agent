@@ -36,3 +36,34 @@ def test_search_trace_contains_safe_embedding_diagnostics(tmp_path: Path) -> Non
     assert search["parameters"]["retrieval_mode"] == "hash_fallback"
     assert search["parameters"]["candidate_count"] >= 2
     assert "vector" not in str(search["parameters"]).lower()
+
+
+def test_conflict_is_not_hidden_by_an_extra_retrieval_candidate(tmp_path: Path) -> None:
+    from enterprise_qa.models import KnowledgeChunk
+    from enterprise_qa.tools import ToolOutcome
+    from enterprise_qa.workflow import execute_action
+
+    # The final Agent guard must key off D01/D02 presence, not an exact set.
+    state = {
+        "read_chunks": [
+            KnowledgeChunk("D01", "Travel", "2026.1", "2026-01-01", "D01-C1", "30 days"),
+            KnowledgeChunk("D02", "Urgent", "2026.2", "2026-02-15", "D02-C1", "15 days"),
+            KnowledgeChunk("P01", "Export", "2026.1", "2026-01-10", "P01-C1", "30 days"),
+        ],
+        "trace": [],
+        "decision": type("Decision", (), {"action": "answer_with_citations", "source": "live_llm", "rationale": "test"})(),
+        "steps": 0,
+        "max_steps": 8,
+        "fail_tool": None,
+        "fail_consumed": False,
+        "storage": type("Storage", (), {"checkpoint": lambda *args: None})(),
+        "run_id": "test",
+    }
+
+    completed = execute_action(state)
+
+    assert completed["result"].status == "clarification_required"
+    assert {item["document_id"] for item in completed["result"].citations} == {
+        "D01",
+        "D02",
+    }

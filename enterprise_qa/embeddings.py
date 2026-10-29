@@ -85,15 +85,19 @@ class EmbeddingProvider:
             )
 
     def _live_request(self, texts: list[str]) -> list[list[float]]:
-        from langchain_openai import OpenAIEmbeddings
+        from openai import OpenAI
 
-        client = OpenAIEmbeddings(
-            model=os.environ["EMBEDDING_MODEL"],
+        client = OpenAI(
             api_key=os.environ["EMBEDDING_API_KEY"],
             base_url=os.environ["EMBEDDING_BASE_URL"],
-            request_timeout=15,
+            timeout=15,
         )
-        return self._validate_vectors(client.embed_documents(texts), len(texts))
+        response = client.embeddings.create(
+            model=os.environ["EMBEDDING_MODEL"],
+            input=texts,
+        )
+        vectors = [item.embedding for item in response.data]
+        return self._validate_vectors(vectors, len(texts))
 
     def _validate_response(self, response: dict[str, Any], expected_count: int) -> list[list[float]]:
         data = response.get("data")

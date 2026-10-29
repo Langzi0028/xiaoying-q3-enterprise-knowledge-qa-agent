@@ -21,6 +21,22 @@ def test_urgent_project_query_ranks_urgent_policy_first(tmp_path) -> None:
     assert search.results[0].document_id == "D02"
 
 
+def test_explicit_domestic_travel_scope_excludes_urgent_policy(tmp_path) -> None:
+    index = VectorIndex.with_hash_fallback(tmp_path / "index.db")
+
+    search = index.search("普通国内差旅报销凭证多久提交？", build_chunks(DOCUMENTS), top_k=3)
+
+    assert [result.document_id for result in search.results] == ["D01"]
+
+
+def test_low_similarity_candidates_are_not_returned(tmp_path) -> None:
+    index = VectorIndex.with_hash_fallback(tmp_path / "index.db")
+
+    search = index.search("公司股票什么时候上市？", build_chunks(DOCUMENTS), top_k=3)
+
+    assert search.results == []
+
+
 def test_cache_rebuilds_when_embedding_fingerprint_changes(tmp_path) -> None:
     database = tmp_path / "index.db"
     chunks = build_chunks(DOCUMENTS)

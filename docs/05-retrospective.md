@@ -16,4 +16,4 @@ The embedding upgrade includes a raw local corpus, generated chunks, configurabl
 
 ## Risks and next steps
 
-The constrained live action-selection request is verified, but live embedding evidence remains unavailable until a compatible `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL`, and `EMBEDDING_MODEL` are supplied. The next step is a sanctioned online embedding run to inspect a real `live_embedding` retrieval trace against a larger approved document corpus. Production deployment would additionally need document access control, ingestion validation, and evaluation data.
+Real action-selection and embedding requests are verified against the configured compatible gateway. A gateway-specific issue required bypassing a wrapper that transformed the embedding input into token arrays; the direct compatible request now sends a string array and is protected by regression tests. The next step is evaluation against a larger approved document corpus to calibrate similarity thresholds. Production deployment would additionally need document access control, ingestion validation, and evaluation data.
