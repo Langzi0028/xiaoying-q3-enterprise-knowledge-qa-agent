@@ -1,0 +1,5 @@
+﻿{
+    "command":  "python main.py ask --question \u003cquestion\u003e --database data/evidence.db",
+    "question":  "公司股票什么时候上市？",
+    "database":  "data/evidence.db"
+}

@@ -1,0 +1,23 @@
+﻿{
+    "status":  "clarification_required",
+    "answer":  null,
+    "clarifying_question":  "D01 �涨��ͨ���ڲ���ƾ֤���� 30 ����Ȼ�����ύ��D02 �涨�����Ŀ�������� 15 ����Ȼ�����ύ����ʷ����Ƿ����ڽ����Ŀ��",
+    "citations":  [
+                      {
+                          "document_id":  "D01",
+                          "version":  "2026.1",
+                          "date":  "2026-01-01",
+                          "chunk_id":  "D01-C1",
+                          "title":  "Travel and Expense Policy"
+                      },
+                      {
+                          "document_id":  "D02",
+                          "version":  "2026.2",
+                          "date":  "2026-02-15",
+                          "chunk_id":  "D02-C1",
+                          "title":  "Urgent Project Expense Addendum"
+                      }
+                  ],
+    "decision_source":  "fallback_missing_config",
+    "error_code":  null
+}

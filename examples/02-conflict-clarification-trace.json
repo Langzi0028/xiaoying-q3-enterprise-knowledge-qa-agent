@@ -1,0 +1,50 @@
+﻿[
+    {
+        "step":  1,
+        "node":  "execute_action",
+        "action":  "search_documents",
+        "parameters":  {
+                           "question_length":  9
+                       },
+        "result_summary":  "2 matching source chunks found.",
+        "next_action":  "read_chunk",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Search must run before evidence can be read."
+    },
+    {
+        "step":  2,
+        "node":  "execute_action",
+        "action":  "read_chunk",
+        "parameters":  {
+                           "chunk_id":  "D01-C1"
+                       },
+        "result_summary":  "Read verified chunk D01-C1.",
+        "next_action":  "read_chunk",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Read the next retrieved source chunk."
+    },
+    {
+        "step":  3,
+        "node":  "execute_action",
+        "action":  "read_chunk",
+        "parameters":  {
+                           "chunk_id":  "D02-C1"
+                       },
+        "result_summary":  "Read verified chunk D02-C1.",
+        "next_action":  "ask_clarifying_question",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Read the next retrieved source chunk."
+    },
+    {
+        "step":  4,
+        "node":  "execute_action",
+        "action":  "ask_clarifying_question",
+        "parameters":  {
+                           "citation_count":  2
+                       },
+        "result_summary":  "Requested urgent-project scope to resolve conflicting deadlines.",
+        "next_action":  "finalize",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "The retrieved deadlines conflict until urgent-project scope is known."
+    }
+]

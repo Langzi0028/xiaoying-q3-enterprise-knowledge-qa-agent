@@ -1,0 +1,26 @@
+﻿[
+    {
+        "step":  1,
+        "node":  "execute_action",
+        "action":  "search_documents",
+        "parameters":  {
+                           "question_length":  11
+                       },
+        "result_summary":  "0 matching source chunks found.",
+        "next_action":  "stop",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Search must run before evidence can be read."
+    },
+    {
+        "step":  2,
+        "node":  "execute_action",
+        "action":  "stop",
+        "parameters":  {
+
+                       },
+        "result_summary":  "Stopped because no supporting source was found.",
+        "next_action":  "finalize",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "No supporting document was found."
+    }
+]

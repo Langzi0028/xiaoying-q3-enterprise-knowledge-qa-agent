@@ -1,0 +1,38 @@
+﻿[
+    {
+        "step":  1,
+        "node":  "execute_action",
+        "action":  "search_documents",
+        "parameters":  {
+                           "question_length":  15
+                       },
+        "result_summary":  "1 matching source chunks found.",
+        "next_action":  "read_chunk",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Search must run before evidence can be read."
+    },
+    {
+        "step":  2,
+        "node":  "execute_action",
+        "action":  "read_chunk",
+        "parameters":  {
+                           "chunk_id":  "D01-C1"
+                       },
+        "result_summary":  "Read verified chunk D01-C1.",
+        "next_action":  "answer_with_citations",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Read the next retrieved source chunk."
+    },
+    {
+        "step":  3,
+        "node":  "execute_action",
+        "action":  "answer_with_citations",
+        "parameters":  {
+                           "citation_count":  1
+                       },
+        "result_summary":  "Answered from the verified travel policy chunk.",
+        "next_action":  "finalize",
+        "decision_source":  "fallback_missing_config",
+        "rationale":  "Verified source chunks support the result."
+    }
+]

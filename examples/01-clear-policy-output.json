@@ -1,0 +1,16 @@
+﻿{
+    "status":  "answered",
+    "answer":  "��ͨ���ڲ��ñ���ƾ֤���ڷ��÷����� 30 ����Ȼ�����ύ��",
+    "clarifying_question":  null,
+    "citations":  [
+                      {
+                          "document_id":  "D01",
+                          "version":  "2026.1",
+                          "date":  "2026-01-01",
+                          "chunk_id":  "D01-C1",
+                          "title":  "Travel and Expense Policy"
+                      }
+                  ],
+    "decision_source":  "fallback_missing_config",
+    "error_code":  null
+}
